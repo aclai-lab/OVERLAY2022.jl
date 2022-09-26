@@ -1,5 +1,8 @@
 module OVERLAY2022
 
-# Write your package code here.
+using Random
+using SoleModelChecking
+
+include("experiments.jl")
 
 end
