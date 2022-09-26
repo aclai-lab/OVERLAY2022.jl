@@ -6,18 +6,6 @@ using Plots, Plots.Measures
 using CSV, Tables
 using CPUTime
 
-#=
-using BenchmarkTools
-BenchmarkTools.DEFAULT_PARAMETERS.samples = 1
-BenchmarkTools.DEFAULT_PARAMETERS.evals = 1
-=#
-
-###############################
-#      Multiple formula       #
-#      Multiple models        #
-#       Model Checking        #
-###############################
-
 """
 @realtime
 
@@ -31,8 +19,8 @@ macro realtime(ex)
         # compiler heuristic: compile this block (alter this if the heuristic changes)
         # more on https://github.com/JuliaLang/julia/issues/39760
         while false; end
-        local t_comp1 = Base.cumulative_compile_time_ns_before()
         local t_elapsed1 = time_ns()
+        local t_comp1 = Base.cumulative_compile_time_ns_before()
         $(esc(ex))
         local t_comp2 = Base.cumulative_compile_time_ns_after()
         local t_elapsed2 = time_ns()
@@ -69,19 +57,6 @@ function mmcheck_experiment(
     # time matrix is initialized
     times = fill(zero(Float64), length(fheight_memo), fnumbers)
 
-    # Dummy execution
-    #=
-    for _ = 1:(reps*0.1)
-        _mmcheck_experiment(
-            𝑀,
-            fnumbers,
-            fheight,
-            fheight_memo,
-            pruning_factor = pruning_factor,
-            rng = rng,
-        )
-    end
-    =#
     # Main computational cycle
     for _ = 1:reps
         times =
@@ -259,8 +234,11 @@ function driver(args)
         evaluations!(km, dispense_alphabet(worlds(km), P = letters, rng = rng))
     end
 
+    # Conversion of fmemos and avoid exceeding max formula height
     fheight_memo = args["fmemo"]
     fheight_memo = map(c -> c != "no" ? tryparse(Int64,c) : -1, split(args["fmemo"], ","))
+    fheight_memo = map(c -> c > args["fmaxheight"] ? args["fmaxheight"] : c, fheight_memo)
+    unique!(fheight_memo)
 
     mmcheck_experiment(
         kms,
@@ -336,5 +314,5 @@ function parse_commandline()
     return parse_args(s)
 end
 
-# e.g julia --project=. src/experiments.jl --nmodels 10 --nworlds 20 --nletters 2 --fmaxheight 3 --nformulas 100 --prfactor 0.5 --nreps 10 --fmemo="no,2,5,8"
+# e.g julia --project=. src/experiments.jl --nmodels 10 --nworlds 20 --nletters 2 --fmaxheight 3 --nformulas 100 --prfactor 0.5 --nreps 10 --fmemo="no,0,1"
 driver(parse_commandline())
