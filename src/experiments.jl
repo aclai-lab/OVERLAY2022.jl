@@ -18,9 +18,6 @@ BenchmarkTools.DEFAULT_PARAMETERS.evals = 1
 #       Model Checking        #
 ###############################
 
-
-
-
 """
 @realtime
 
@@ -42,14 +39,6 @@ macro realtime(ex)
         ((t_elapsed2 - t_elapsed1) - (t_comp2 - t_comp1)) / 1e9
     end
 end
-
-
-
-
-
-
-
-
 
 # A random generated formula is applied on multiple kripke models (_mmcheck_experiment).
 # This process is repeated `fnumbers` times, thus returning an array of times (Float64),
