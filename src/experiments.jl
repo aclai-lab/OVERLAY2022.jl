@@ -4,9 +4,6 @@ using Random
 using Plots, Plots.Measures
 using CSV, Tables
 
-# TODO: check dependencies
-# TODO: provide the usage of this module without forcing to use flags
-
 """
     @realtime expr
 
