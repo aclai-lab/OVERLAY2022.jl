@@ -4,7 +4,6 @@ using Random
 using Missings
 using Plots, Plots.Measures
 using CSV, Tables
-using CPUTime
 
 """
 @realtime
@@ -16,17 +15,19 @@ Compilation time is not included.
 """
 macro realtime(ex)
     quote
-        # compiler heuristic: compile this block (alter this if the heuristic changes)
-        # more on https://github.com/JuliaLang/julia/issues/39760
         while false; end
-        local t_elapsed1 = time_ns()
-        local t_comp1 = Base.cumulative_compile_time_ns_before()
+        local elapsedtime = time_ns()
+        Base.cumulative_compile_timing(true)
+        local compile_elapsedtime = first(Base.cumulative_compile_time_ns())
         $(esc(ex))
-        local t_comp2 = Base.cumulative_compile_time_ns_after()
-        local t_elapsed2 = time_ns()
-        ((t_elapsed2 - t_elapsed1) - (t_comp2 - t_comp1)) / 1e9
+        elapsedtime = time_ns() - elapsedtime
+        Base.cumulative_compile_timing(false)
+        compile_elapsedtime =
+            first(Base.cumulative_compile_time_ns()) - compile_elapsedtime
+        (elapsedtime - compile_elapsedtime) / 1e9
     end
 end
+
 
 # A random generated formula is applied on multiple kripke models (_mmcheck_experiment).
 # This process is repeated `fnumbers` times, thus returning an array of times (Float64),
