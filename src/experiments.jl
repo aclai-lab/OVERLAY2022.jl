@@ -247,10 +247,12 @@ function driver(args)
     letters = LetterAlphabet(collect(string.(['a':('a'+(args["nletters"]-1))]...)))
 
     # A "primer" Kripke Model is fixed, then models with different Evaluations set are generated
+    indegree = trunc(args["nworlds"] * 0.1)
+    outdegree = trunc(args["nworlds"] * 0.1)
     primer = gen_kmodel(
         args["nworlds"],
-        rand(rng, 1:rand(rng, 1:args["nworlds"])),
-        rand(rng, 1:rand(rng, 1:args["nworlds"])),
+        indegree,
+        outdegree,
         P = letters,
         rng = rng,
     )
@@ -260,7 +262,6 @@ function driver(args)
     end
 
     fmemo = _parse_fmemo(args["fmemo"], args["fmaxheight"])
-    println(typeof(fmemo))
 
     mmcheck_experiment(
         kms,
