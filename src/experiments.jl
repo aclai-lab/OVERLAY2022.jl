@@ -40,7 +40,7 @@ The formulas are generated with a maximum height: it is certain that all the
     it's more likely to have lower heights when `prfactor` increases towards 1.0
     (see Arguments section).
 
-    # Arguments
+# Arguments
 - `M::Vector{KripkeModel{T}}`: Kripke Models vector containing worlds with the same shape.
 - `fnumbers::Integer`: number of formulas generated.
 - `fheight::Integer`: maximum height of each generated formula.
@@ -54,7 +54,7 @@ The formulas are generated with a maximum height: it is certain that all the
     See also [`driver`](@ref)
 - `rng::Union{Integer,AbstractRNG}`: integer to initialize a new rng, or an rng.
 
-# Examples
+# Example
 
 ```jldoctest
 julia> models = [gen_kmodel(20, 5, 5) for _ in 1:10]
@@ -235,7 +235,7 @@ end
 Helper function to run the experiments from commandline through the specification
     of some flags. Run using --help to know all the available parameters.
 
-# Examples
+# Example
 
 ```
 > julia --project=. src/experiments.jl --nmodels 10 --nworlds 10 --nletters 2 --fmaxheight 4 --nformulas 100 --prfactor 0.8 --nreps 10 --fmemo="no,0,1,2"
