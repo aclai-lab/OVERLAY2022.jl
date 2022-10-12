@@ -46,4 +46,7 @@ TODO: installing all the dependencies could be a tedious procedure that could be
 ## Examples 
 
 ![plot](./outcomes/plots/first_set_example.png)
-*Insert a brief description here.*
+>*Parametrization: Insert a brief description here.*
+
+![plot](./outcomes/plots/second_set_example.png)
+> *Parametrization: Insert a brief description here.*
