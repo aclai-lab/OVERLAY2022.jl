@@ -27,7 +27,7 @@ Ionel Eduard Stan
 
 ## Software usage
 
-The purpose of this module is to, given a certain parametrization, compute model-checking over multiple models and multiple formulas as explained in the paper. Also, results are plotted showing how much time we saved/wasted by performing (sub)formulas memoization.
+The purpose of this module is to, given a certain parametrization, compute model-checking over multiple models and multiple formulas. Also, results are plotted showing how much time it's saved/wasted by performing (sub)formulas memoization.
 The core of the code can be found in `src`.
 
 Please, use the following command to run:
@@ -37,7 +37,7 @@ Please, use the following command to run:
 An utility bash script is provided (see `src/launch_experiments.sh`) to enqueue the execution of more parametrizations, instead of manually launching the command above.
 Simply change the arrays at the start of the script.
 
-The generated plot is saved in `outcomes/plots`. Each execution it's also associated with a csv, created in `outcomes/csv`, which is useful to adjust and customize plottings with ad-hoc scripts: in this regard, an example python script is provided (it's placed in the latter director) to obtain results graphically similar to those presented in the paper. 
+The generated plot is saved in `outcomes/plots`. Each execution it's also associated with a csv (created in `outcomes/csv`) useful to adjust and customize plottings with ad-hoc scripts: in this regard, an example python script is provided (it's placed in the latter director) to obtain results graphically similar to those presented in the paper. 
 
 ## Dependencies
 
