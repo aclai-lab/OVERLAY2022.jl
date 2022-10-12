@@ -116,8 +116,9 @@ function mmcheck_experiment(
             cumsum(times[m, :]),
             labels = "memo: $(fmemo[m])",
             margins = 10mm,
-            legend = :topleft
-            # yaxis=:log10
+            legend = :topleft,
+            xlabel = "n-th formula",
+            ylabel = "Cumulative time"
         )
     end
     savefig(plt1, fpath * "simple-$(join(exp_params, "_")).png")
@@ -133,8 +134,9 @@ function mmcheck_experiment(
             margins = 10mm,
             legend = :topleft,
             markersize = 2,
-            markerstrokewidth = 0
-            # yaxis=:log10
+            markerstrokewidth = 0,
+            xlabel = "n-th formula",
+            ylabel = "Istantaneous time"
         )
     end
     savefig(plt2, fpath * "scatter-$(join(exp_params, "_")).png")
@@ -247,8 +249,8 @@ function driver(args)
     letters = LetterAlphabet(collect(string.(['a':('a'+(args["nletters"]-1))]...)))
 
     # A "primer" Kripke Model is fixed, then models with different Evaluations set are generated
-    indegree = trunc(args["nworlds"] * 0.1)
-    outdegree = trunc(args["nworlds"] * 0.1)
+    indegree = convert(Int64, trunc(args["nworlds"] * 0.1))
+    outdegree = convert(Int64, trunc(args["nworlds"] * 0.1))
     primer = gen_kmodel(
         args["nworlds"],
         indegree,
