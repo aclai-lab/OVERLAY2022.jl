@@ -7,6 +7,7 @@
 [![Build Status](https://api.cirrus-ci.com/github/aclai-lab/OVERLAY2022.jl.svg)](https://cirrus-ci.com/github/aclai-lab/OVERLAY2022.jl)
 [![Coverage](https://codecov.io/gh/aclai-lab/OVERLAY2022.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/aclai-lab/OVERLAY2022.jl)
 [![Coverage](https://coveralls.io/repos/github/aclai-lab/OVERLAY2022.jl/badge.svg?branch=master)](https://coveralls.io/github/aclai-lab/OVERLAY2022.jl?branch=master)
+![Version](https://img.shields.io/badge/julia-1.8.1-orange)
 
 
 # Multi-Models and Multi-Formulas Model Checking for Modal Logic Formulas Induction
