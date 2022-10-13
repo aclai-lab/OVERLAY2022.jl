@@ -64,7 +64,7 @@ def export_plot(data, x, n_pr, linestyles, colors, memo_values, prun_values, exp
                 linewidth=1
             )
 
-            plt.xlabel("$n$-{th} formula", fontsize=22, labelpad=10)
+            plt.xlabel("$i$-{th} formula", fontsize=22, labelpad=10)
             plt.ylabel("Cumulative time", fontsize=22, labelpad=10)
             plt.tick_params(axis='both', which='major', labelsize=18)
 
