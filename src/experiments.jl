@@ -249,8 +249,8 @@ function driver(args)
     letters = LetterAlphabet(collect(string.(['a':('a'+(args["nletters"]-1))]...)))
 
     # A "primer" Kripke Model is fixed, then models with different Evaluations set are generated
-    indegree = convert(Int64, trunc(args["nworlds"] * 0.1))
-    outdegree = convert(Int64, trunc(args["nworlds"] * 0.1))
+    indegree = convert(Int64, ceil(args["nworlds"] * 0.1))
+    outdegree = convert(Int64, ceil(args["nworlds"] * 0.1))
     primer = gen_kmodel(
         args["nworlds"],
         indegree,
@@ -293,46 +293,48 @@ function parse_commandline()
 
     @add_arg_table s begin
         "--nmodels"
-        help = "Number of kripke models"
+        help = "Number of kripke models."
         arg_type = Int
         required = true
 
         "--nworlds"
-        help = "Number of worlds in each kripke model"
+        help = "Number of worlds in each kripke model."
         arg_type = Int
         default = 10
 
         "--nletters"
-        help = "Alphabet cardinality"
+        help = "Alphabet cardinality."
         arg_type = Int
         required = true
 
         "--fmaxheight"
-        help = "Formula max height"
+        help = "Formula max height."
         arg_type = Int
         required = true
 
         "--fmemo"
-        help = "Max memoized formulas height"
+        help = "Set of string representing the max memoized formulas height; " *
+        "no' means that memoization is not shared between different (sub)formulas. " *
+        "E.g of a valid usage: --fmemo='no,0,1,2'."
         required = true
 
         "--nformulas"
-        help = "Number of formulas"
+        help = "Number of formulas."
         arg_type = Int
         required = true
 
         "--prfactor"
-        help = "Pruning factor to shorten generated formulas"
+        help = "Pruning factor to shorten generated formulas."
         arg_type = Float64
         default = 0.0
 
         "--nreps"
-        help = "Number of repetitions"
+        help = "Number of repetitions."
         arg_type = Int
         default = 100
 
         "--rng"
-        help = "Seed to reproduce the experiment"
+        help = "Seed to reproduce the experiment."
         arg_type = Int
         default = 1337
     end
