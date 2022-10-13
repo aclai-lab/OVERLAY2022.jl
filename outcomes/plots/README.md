@@ -1,1 +1,1 @@
-Generated plots will be saved here.
+Generated plots (see mmcheck_experiment function in src/experiments.jl ) will be saved here.

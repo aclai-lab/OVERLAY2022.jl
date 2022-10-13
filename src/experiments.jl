@@ -1,13 +1,11 @@
 using SoleModelChecking
 using ArgParse
 using Random
-using Missings
 using Plots, Plots.Measures
 using CSV, Tables
-using CPUTime
 
 """
-@realtime
+    @realtime expr
 
 A macro to evaluate an expression, discarding the resulting value, instead returning the
 number of seconds it took to execute as a floating-point number.
@@ -16,148 +14,176 @@ Compilation time is not included.
 """
 macro realtime(ex)
     quote
-        # compiler heuristic: compile this block (alter this if the heuristic changes)
-        # more on https://github.com/JuliaLang/julia/issues/39760
-        while false; end
-        local t_elapsed1 = time_ns()
-        local t_comp1 = Base.cumulative_compile_time_ns_before()
+        # Compiler heuristic; compilation is forced.
+        while false; end # Base.Experimental.@force_compile
+        local elapsedtime = time_ns()
+        Base.cumulative_compile_timing(true)
+        local compile_elapsedtime = first(Base.cumulative_compile_time_ns())
         $(esc(ex))
-        local t_comp2 = Base.cumulative_compile_time_ns_after()
-        local t_elapsed2 = time_ns()
-        ((t_elapsed2 - t_elapsed1) - (t_comp2 - t_comp1)) / 1e9
+        elapsedtime = time_ns() - elapsedtime
+        Base.cumulative_compile_timing(false)
+        compile_elapsedtime =
+            first(Base.cumulative_compile_time_ns()) - compile_elapsedtime
+        (elapsedtime - compile_elapsedtime) / 1e9
     end
 end
 
-# A random generated formula is applied on multiple kripke models (_mmcheck_experiment).
-# This process is repeated `fnumbers` times, thus returning an array of times (Float64),
-# for each requested `memo_fheight`.
-# Eg: mmcheck_experiment(some_models, 1000, 10, [0,2,4,6]) returns a 4x1000 matrix of times.
+"""
+    mmcheck_experiment(M, fnumbers, fheight, fmemo; P, prfactor, reps, exp_params, rng)
+
+Check `fnumbers` formulas on every model in `M` and return a `fmemo` x `fnumbers` matrix
+    containing the time elapsed to model-checking every model against the nth formula;
+    the ith row of this matrix refers to the ith value in `fmemo` (see arguments).
+
+The formulas are generated with a maximum height: it is certain that all the
+    formula trees will be tall exactly `fheight` if the `prfactor` is 0.0 while
+    it's more likely to have lower heights when `prfactor` increases towards 1.0
+    (see Arguments section).
+
+# Arguments
+- `M::Vector{KripkeModel{T}}`: Kripke Models vector containing worlds with the same shape.
+- `fnumbers::Integer`: number of formulas generated.
+- `fheight::Integer`: maximum height of each generated formula.
+- `fmemo::Vector{Int64}`: maximum (sub)formulas height a model will memoize.
+    -1 means nothing is memoized, 0 refers only to the leaves, etc...
+- `P::LetterAlphabet`: vector of Letter (which, currently, are just strings).
+- `prfactor::Float64`: float between 0.0 and 1.0;
+    it regulates the real generated-formulas' height: see [`SoleLogics.gen_formula`](@ref).
+- `reps::Integer`: number of repetitions.
+- `exp_params::Tuple`: tuple containing the name of generated files.
+    See also [`driver`](@ref)
+- `rng::Union{Integer,AbstractRNG}`: integer to initialize a new rng, or an rng.
+
+# Example
+
+```jldoctest
+julia> models = [gen_kmodel(20, 5, 5) for _ in 1:10]
+julia> fnumbers = 10
+julia> fheight = 4
+julia> fmemo = [-1, 0, 1]
+julia> mmcheck_experiment(models, fnumbers, fheight, fmemo)
+```
+"""
 function mmcheck_experiment(
-    𝑀::Vector{KripkeModel{T}},
+    M::Vector{KripkeModel{T}},
     fnumbers::Integer,
     fheight::Integer,
-    fheight_memo::Vector{<:Number};
+    fmemo::Vector{Int64};
     P::LetterAlphabet = SoleLogics.alphabet(MODAL_LOGIC),
-    pruning_factor::Float64 = 0.0,
+    prfactor::Float64 = 0.0,
     reps::Integer = 1,
-    experiment_parametrization::Tuple = (
-        fnumbers,
-        fheight,
-        fheight_memo,
-        Threads.nthreads(),
-    ),
-    rng::Union{Integer,AbstractRNG} = 1337,
-    export_plot = true,
+    exp_params::Tuple = (fnumbers),
+    rng::Union{Integer,AbstractRNG} = 1337
 ) where {T<:AbstractWorld}
+    times = fill(zero(Float64), length(fmemo), fnumbers)
     rng = (typeof(rng) <: Integer) ? Random.MersenneTwister(rng) : rng
 
-    # all the different memoization levels are converted to integers
-    fheight_memo = [m == Inf ? fheight : convert(Int64, m) for m in fheight_memo]
-
-    # time matrix is initialized
-    times = fill(zero(Float64), length(fheight_memo), fnumbers)
-
-    # Main computational cycle
+    # Main computational cycle.
     for _ = 1:reps
+        # Each _mmcheck_experiment returns a matrix of times.
         times =
             times + _mmcheck_experiment(
-                𝑀,
+                M,
                 fnumbers,
                 fheight,
-                fheight_memo,
+                fmemo,
                 P = P,
-                pruning_factor = pruning_factor,
+                prfactor = prfactor,
                 rng = rng,
             )
     end
-    # mean times
+    # Compute mean times.
     times = times ./ reps
 
-    # times are exported in a CSV file
+    # Export times in a CSV file.
     CSV.write(
-        "./outcomes/csv/$(join(experiment_parametrization, "_")).csv",
+        "./outcomes/csv/$(join(exp_params, "_")).csv",
         Tables.table(times),
         append = true,
     )
 
-    # if requested, plots are exported too
-    if export_plot
-        theme(:vibrant)
-        fpath = "./outcomes/plots/"
-        mkpath(fpath)
-        # number of formulas vs cumulative time
-        plt1 = plot()
-        for m in eachindex(fheight_memo)
-            plot!(
-                plt1,
-                1:fnumbers,
-                cumsum(times[m, :]),
-                labels = "memo: $(fheight_memo[m])",
-                margins = 10mm,
-                legend = :topleft
-               # yaxis=:log10
-            )
-        end
-        savefig(plt1, fpath * "simple-$(join(experiment_parametrization, "_")).png")
+    # Plots
+    theme(:vibrant)
+    fpath = "./outcomes/plots/"
+    mkpath(fpath)
 
-        # nth formula vs istantaneous time
-        plt2 = plot()
-        for m in eachindex(fheight_memo)
-            scatter!(
-                plt2,
-                1:fnumbers,
-                times[m, :],
-                labels = "memo: $(fheight_memo[m])",
-                margins = 10mm,
-                legend = :topleft,
-                markersize = 2,
-                markerstrokewidth = 0
-                # yaxis=:log10
-            )
-        end
-        savefig(plt2, fpath * "scatter-$(join(experiment_parametrization, "_")).png")
+    # Nth formula vs cumulative time
+    plt1 = plot()
+    for m in eachindex(fmemo)
+        plot!(
+            plt1,
+            1:fnumbers,
+            cumsum(times[m, :]),
+            labels = "memo: $(fmemo[m])",
+            margins = 10mm,
+            legend = :topleft,
+            xlabel = "n-th formula",
+            ylabel = "Cumulative time"
+        )
     end
+    savefig(plt1, fpath * "simple-$(join(exp_params, "_")).png")
 
+    # Nth formula vs istantaneous time
+    plt2 = plot()
+    for m in eachindex(fmemo)
+        scatter!(
+            plt2,
+            1:fnumbers,
+            times[m, :],
+            labels = "memo: $(fmemo[m])",
+            margins = 10mm,
+            legend = :topleft,
+            markersize = 2,
+            markerstrokewidth = 0,
+            xlabel = "n-th formula",
+            ylabel = "Istantaneous time"
+        )
+    end
+    savefig(plt2, fpath * "scatter-$(join(exp_params, "_")).png")
+
+    # If you want to generate your own graphic, here you are the times matrix
     return times
 end
 
+# Computational core of mmcheck_experiment
 function _mmcheck_experiment(
-    𝑀::Vector{KripkeModel{T}},
+    M::Vector{KripkeModel{T}},
     fnumbers::Integer,
     fheight::Integer,
-    fheight_memo::Vector{<:Number};
+    fmemo::Vector{<:Number};
     P::LetterAlphabet = SoleLogics.alphabet(MODAL_LOGIC),
-    pruning_factor::Float64 = 0.0,
+    prfactor::Float64 = 0.0,
     rng::AbstractRNG = Random.GLOBAL_RNG,
 ) where {T<:AbstractWorld}
-    # time matrix is initialized
-    times = fill(zero(Float64), length(fheight_memo), fnumbers)
+    # Initialize time matrix
+    times = fill(zero(Float64), length(fmemo), fnumbers)
 
-    # array of formulas is generated
+    # Generate formulas
     fxs = [
-        gen_formula(fheight, P = P, pruning_factor = pruning_factor, rng = rng)
+        gen_formula(fheight, P = P, pruning_factor = prfactor, rng = rng)
         for _ in 1:fnumbers
     ]
 
-    for m in eachindex(fheight_memo)
-        # `fnumbers` model checkings are called, keeping memoization among calls
+    # For each memoization level `fmemo[m]`, `fnumbers` model checkings
+    # are executed on every model `km`, keeping memoization among calls
+    # and pushing the execution time in a new times-matrix row (`current_times`).
+    for m in eachindex(fmemo)
         current_times = Float64[]
 
-        # fnumbers times are pushed into current_times
         for i = 1:fnumbers
             elapsed = zero(Float64)
-            for km in 𝑀
+            for km in M
                 elapsed =
                     elapsed +
-                    _timed_check_experiment(km, fxs[i], max_fheight_memo = fheight_memo[m])
+                    _timed_check_experiment(km, fxs[i], max_fmemo = fmemo[m])
             end
             push!(current_times, elapsed)
         end
 
-        # a complete level of memoization is now tested
+        # A complete level of memoization has been tested.
         times[m, :] = current_times[:]
-        # memoization is completely cleaned up; this way next iterations will not cheat
-        for km in 𝑀
+        # Memoization is completely cleaned up; this way next iterations will not cheat.
+        for km in M
             empty!(memo(km))
         end
     end
@@ -165,42 +191,24 @@ function _mmcheck_experiment(
     return times
 end
 
-# Timed model checking.
+# Model checking, timed with @realtime to avoid keeping track of compilation times.
 function _timed_check_experiment(
     km::KripkeModel,
     fx::SoleLogics.Formula;
-    max_fheight_memo = Inf,
+    max_fmemo = Inf,
 )
     forget_list = Vector{SoleLogics.Node}()
     t = zero(Float64)
 
     if !haskey(memo(km), fhash(fx.tree))
         for psi in subformulas(fx.tree)
-            if SoleLogics.height(psi) > max_fheight_memo
+            if SoleLogics.height(psi) > max_fmemo
                 push!(forget_list, psi)
             end
 
             t = t + @realtime if !haskey(memo(km), fhash(psi))
                 _process_node(km, psi)
             end
-
-            # Trick to avoid tracking compilation times
-            #=
-            t_comp1 = convert(Int64, Base.cumulative_compile_time_ns_before())
-            eps = @elapsed if !haskey(memo(km), fhash(psi))
-                _process_node(km, psi)
-            end
-            t_comp2 = convert(Int64, Base.cumulative_compile_time_ns_before())
-
-            if t_comp1 != t_comp2
-                println("C'e' stata una compilazione: ", (t_comp2 - t_comp1) / 10e8)
-                println("Il tempo e' ", eps)
-                println("Risulta: ", eps - (t_comp2-t_comp1) / (10e8))
-                println("--------------\n")
-            end
-
-            t = t + eps - (t_comp2-t_comp1) / (10e8)
-            =#
         end
     end
 
@@ -215,17 +223,38 @@ function _timed_check_experiment(
     return t
 end
 
-# Experiments driver function
+# Utility to transform "no,0,1,Inf" int [-1 0 1 `maxFheight]
+function _parse_fmemo(fmemo, maxheight)
+    fmemo = map(m -> m == "Inf" ? string(maxheight) : m, split(fmemo, ","))
+    fmemo = map(m -> m != "no" ? tryparse(Int64,m) : -1, fmemo)
+    unique!(fmemo)
+    return fmemo
+end
+
+"""
+    driver
+
+Helper function to run the experiments from commandline through the specification
+    of some flags. Run using --help to know all the available parameters.
+
+# Example
+
+```
+> julia --project=. src/experiments.jl --nmodels 10 --nworlds 10 --nletters 2 --fmaxheight 4 --nformulas 100 --prfactor 0.8 --nreps 10 --fmemo="no,0,1,2"
+```
+"""
 function driver(args)
     rng = Random.MersenneTwister(args["rng"])
 
     letters = LetterAlphabet(collect(string.(['a':('a'+(args["nletters"]-1))]...)))
 
     # A "primer" Kripke Model is fixed, then models with different Evaluations set are generated
+    indegree = convert(Int64, ceil(args["nworlds"] * 0.1))
+    outdegree = convert(Int64, ceil(args["nworlds"] * 0.1))
     primer = gen_kmodel(
         args["nworlds"],
-        rand(rng, 1:rand(rng, 1:args["nworlds"])),
-        rand(rng, 1:rand(rng, 1:args["nworlds"])),
+        indegree,
+        outdegree,
         P = letters,
         rng = rng,
     )
@@ -234,21 +263,17 @@ function driver(args)
         evaluations!(km, dispense_alphabet(worlds(km), P = letters, rng = rng))
     end
 
-    # Conversion of fmemos and avoid exceeding max formula height
-    fheight_memo = args["fmemo"]
-    fheight_memo = map(c -> c != "no" ? tryparse(Int64,c) : -1, split(args["fmemo"], ","))
-    fheight_memo = map(c -> c > args["fmaxheight"] ? args["fmaxheight"] : c, fheight_memo)
-    unique!(fheight_memo)
+    fmemo = _parse_fmemo(args["fmemo"], args["fmaxheight"])
 
     mmcheck_experiment(
         kms,
         args["nformulas"],
         args["fmaxheight"],
-        fheight_memo,
+        fmemo,
         P = letters,
-        pruning_factor = args["prfactor"],
+        prfactor = args["prfactor"],
         reps = args["nreps"],
-        experiment_parametrization = Tuple([
+        exp_params = Tuple([
             args["nmodels"],
             args["nworlds"],
             args["nletters"],
@@ -262,51 +287,54 @@ function driver(args)
     )
 end
 
+# This defines how flags are parsed from the command line
 function parse_commandline()
     s = ArgParseSettings()
 
     @add_arg_table s begin
         "--nmodels"
-        help = "Number of kripke models"
+        help = "Number of kripke models."
         arg_type = Int
         required = true
 
         "--nworlds"
-        help = "Number of worlds in each kripke model"
+        help = "Number of worlds in each kripke model."
         arg_type = Int
         default = 10
 
         "--nletters"
-        help = "Alphabet cardinality"
+        help = "Alphabet cardinality."
         arg_type = Int
         required = true
 
         "--fmaxheight"
-        help = "Formula max height"
+        help = "Formula max height."
         arg_type = Int
         required = true
 
         "--fmemo"
-        help = "Max memoized formulas height"
+        help = "Set of string representing the max memoized formulas height; " *
+        "no' means that memoization is not shared between different (sub)formulas. " *
+        "E.g of a valid usage: --fmemo='no,0,1,2'."
         required = true
 
         "--nformulas"
-        help = "Number of formulas"
+        help = "Number of formulas."
         arg_type = Int
         required = true
 
         "--prfactor"
-        help = "Pruning factor to shorten generated formulas"
+        help = "Pruning factor to shorten generated formulas."
         arg_type = Float64
-        default = 0.7
+        default = 0.0
 
         "--nreps"
-        help = "Number of repetitions"
+        help = "Number of repetitions."
         arg_type = Int
         default = 100
 
         "--rng"
-        help = "Seed to reproduce the experiment"
+        help = "Seed to reproduce the experiment."
         arg_type = Int
         default = 1337
     end
@@ -314,5 +342,8 @@ function parse_commandline()
     return parse_args(s)
 end
 
-# e.g julia --project=. src/experiments.jl --nmodels 10 --nworlds 20 --nletters 2 --fmaxheight 3 --nformulas 100 --prfactor 0.5 --nreps 10 --fmemo="no,0,1"
-driver(parse_commandline())
+# Try to execute the experiments through `driver`,
+# if some flags are provided
+if length(ARGS) > 0
+    driver(parse_commandline())
+end

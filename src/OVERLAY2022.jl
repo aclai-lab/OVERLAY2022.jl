@@ -1,7 +1,8 @@
 module OVERLAY2022
 
-using Random
 using SoleModelChecking
+
+export mmcheck_experiment
 
 include("experiments.jl")
 
