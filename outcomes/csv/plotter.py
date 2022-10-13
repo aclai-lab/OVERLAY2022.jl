@@ -63,12 +63,12 @@ def export_plot(data, x, n_pr, linestyles, colors, memo_values, prun_values, exp
             )
 
             plt.xlabel("$i$-{th} formula", fontsize=22, labelpad=10)
-            plt.ylabel("Cumulative time [$s$]", fontsize=22, labelpad=10)
+            plt.ylabel("Cumulative time ($s$)", fontsize=22, labelpad=10)
             plt.tick_params(axis='both', which='major', labelsize=18)
 
     # Create a custom legend, which color is black
     lines = [Line2D([0], [0], color='black', linestyle=linestyles[i][1]) for i in range(nrows)]
-    labels = ["${}$".format(memo_values[i]) for i in range(nrows)]
+    labels = [memo_values[i] for i in range(nrows)]
     plt.legend(lines, labels, prop={'size': 18}, ncol=legend_ncol)
 
     plt.tight_layout()
@@ -79,7 +79,7 @@ def export_plot(data, x, n_pr, linestyles, colors, memo_values, prun_values, exp
 #                           Main                          #
 ###########################################################
 if __name__ == '__main__':
-    memo_values  = ["h^{single}", "h_{memo}^{multi}=0", "h_{memo}^{multi}=1", "h_{memo}^{multi}=2", "h_{memo}^{multi}=4", "h_{memo}^{multi}=8"]
+    memo_values = ["single", "${}$".format("h_{memo}^{multi}=0"), "${}$".format("h_{memo}^{multi}=1"), "${}$".format("h_{memo}^{multi}=2"), "${}$".format("h_{memo}^{multi}=4"), "${}$".format("h_{memo}^{multi}=8")]
     prun_values  = ["0.2", "0.5"]
 
     export_name = "Insert filename here, including the extension (e.g .png or .pgf)"
