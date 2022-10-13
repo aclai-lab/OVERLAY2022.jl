@@ -1,5 +1,3 @@
-# OVERLAY2022, https://github.com/aclai-lab/OVERLAY2022.jl
-
 ###########################################################
 #                       How to use                        #
 ###########################################################
@@ -65,7 +63,7 @@ def export_plot(data, x, n_pr, linestyles, colors, memo_values, prun_values, exp
             )
 
             plt.xlabel("$i$-{th} formula", fontsize=22, labelpad=10)
-            plt.ylabel("Cumulative time", fontsize=22, labelpad=10)
+            plt.ylabel("Cumulative time [$s$]", fontsize=22, labelpad=10)
             plt.tick_params(axis='both', which='major', labelsize=18)
 
     # Create a custom legend, which color is black
@@ -81,7 +79,7 @@ def export_plot(data, x, n_pr, linestyles, colors, memo_values, prun_values, exp
 #                           Main                          #
 ###########################################################
 if __name__ == '__main__':
-    memo_values  = ["h_{memo}^{single}", "h_{memo}^{multi}=0", "h_{memo}^{multi}=1", "h_{memo}^{multi}=2", "h_{memo}^{multi}=4", "h_{memo}^{multi}=8"]
+    memo_values  = ["h^{single}", "h_{memo}^{multi}=0", "h_{memo}^{multi}=1", "h_{memo}^{multi}=2", "h_{memo}^{multi}=4", "h_{memo}^{multi}=8"]
     prun_values  = ["0.2", "0.5"]
 
     export_name = "Insert filename here, including the extension (e.g .png or .pgf)"
