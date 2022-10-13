@@ -1,11 +1,6 @@
 #=
-    This script purpose is to facilitate the user to compile all the needed dependencies
-
-    SoleAlphabet
-    SoleWorlds
-    SoleTraits
-    SoleLogics
-    SoleModelChecking
+    This script purpose is to facilitate the user to compile all the needed dependencies,
+    expecially the unregistered packages.
 =#
 
 using Pkg
