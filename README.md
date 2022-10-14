@@ -10,7 +10,7 @@
 ![Version](https://img.shields.io/badge/julia-1.8.1-orange)
 
 
-# Multi-Models and Multi-Formulas Model Checking for Modal Logic Formulas Induction
+# Multi-Models and Multi-Formulas Finite Model Checking for Modal Logic Formulas Induction
 
 by Mauro Milella, 
 Giovanni Pagliarini, 
@@ -20,10 +20,10 @@ Ionel Eduard Stan
 ## Abstract
 
 > Modal symbolic learning is the subfield of artificial intelligence that brings together machine learning
-> and modal logic to design algorithms that extract modal logic theories from data. The generalization
-> of model checking to multi-models and multi-formulas is key for the entire inductive process (with
-> modal logics). We investigate such generalization by, first, pointing out the need for model checking in
-> automatic inductive reasoning, and, then, show how to efficiently solve it. We release an open-source
+> and modal logic to design algorithms that extract modal logic theories from data. The generalization of
+> model checking to multi-models and multi-formulas is key for the entire inductive process (with modal
+> logics). We investigate such generalization by, first, pointing out the need for finite model checking in
+> automatic inductive reasoning, and, then, showing how to efficiently solve it. We release an open-source
 > implementation of our simulations.
 
 ## Software usage
