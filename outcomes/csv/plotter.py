@@ -79,7 +79,7 @@ def export_plot(data, x, n_pr, linestyles, colors, memo_values, prun_values, exp
 #                           Main                          #
 ###########################################################
 if __name__ == '__main__':
-    memo_values = ["single", "${}$".format("h_{memo}^{multi}=0"), "${}$".format("h_{memo}^{multi}=1"), "${}$".format("h_{memo}^{multi}=2"), "${}$".format("h_{memo}^{multi}=4"), "${}$".format("h_{memo}^{multi}=8")]
+    memo_values = ["single", "${}$".format("h_{memo}^{global}=0"), "${}$".format("h_{memo}^{global}=1"), "${}$".format("h_{memo}^{global}=2"), "${}$".format("h_{memo}^{global}=4"), "${}$".format("h_{memo}^{global}=8")]
     prun_values  = ["0.2", "0.5"]
 
     export_name = "Insert filename here, including the extension (e.g .png or .pgf)"
