@@ -43,7 +43,7 @@ colors = ['b', 'r', 'c', 'm', 'y', 'k']
 ###########################################################
 #                        Plotting                         #
 ###########################################################
-def export_plot(data, x, n_pr, linestyles, colors, memo_values, prun_values, export_name, legend_ncol):
+def export_plot(data, n_formulas, n_pr, linestyles, colors, memo_values, prun_values, export_name, legend_ncol):
     plt.figure(figsize=(6.5, 4), dpi=80)
     
     # For each pruning factor (thus, for each specified csv)
@@ -55,7 +55,7 @@ def export_plot(data, x, n_pr, linestyles, colors, memo_values, prun_values, exp
             # Draw a line representing the cumulated time 
             # to model-checking until some n-th formula
             plt.plot(
-                np.linspace(1,ncols,x),
+                np.linspace(1,ncols,n_formulas),
                 data[i].cumsum(axis=1)[row],
                 linestyle=linestyles[row][1],
                 color=colors[i],
@@ -79,13 +79,13 @@ def export_plot(data, x, n_pr, linestyles, colors, memo_values, prun_values, exp
 #                           Main                          #
 ###########################################################
 if __name__ == '__main__':
-    memo_values = ["single", "${}$".format("h_{memo}^{global}=0"), "${}$".format("h_{memo}^{global}=1"), "${}$".format("h_{memo}^{global}=2"), "${}$".format("h_{memo}^{global}=4"), "${}$".format("h_{memo}^{global}=8")]
+    memo_values = ["non-shared", "${}$".format("h_{shared}=0"), "${}$".format("h_{shared}=1"), "${}$".format("h_{shared}=2"), "${}$".format("h_{shared}=4"), "${}$".format("h_{shared}=8")]
     prun_values  = ["0.2", "0.5"]
 
-    export_name = "Insert filename here, including the extension (e.g .png or .pgf)"
-    x = 1000
-    first_set  = "50_16_1/50.0_20.0_16.0_1.0_1000.0_0.2_1000.0_1.0.csv" #csv with 0.2 pruning factor
-    second_set = "50_16_1/50.0_20.0_16.0_1.0_1000.0_0.5_1000.0_1.0.csv" #csv with 0.5 pruning factor
+    export_name = "INSERT FILENAME HERE (including the extension, e.g .png or .pgf)"
+    n_formulas = 1000 
+    first_set  = "50_16_1/50.0_20.0_16.0_1.0_1000.0_0.2_1000.0_1.0.csv" # csv with 0.2 pruning factor
+    second_set = "50_16_1/50.0_20.0_16.0_1.0_1000.0_0.5_1000.0_1.0.csv" # csv with 0.5 pruning factor
     data = [pd.read_csv(first_set, header=None), pd.read_csv(second_set, header=None)]
     data = [np.array(data[0]), np.array(data[1])]
-    export_plot(data, x, len(prun_values), linestyles, colors, memo_values, prun_values, export_name + format, legend_ncol=1)
+    export_plot(data, n_formulas, len(prun_values), linestyles, colors, memo_values, prun_values, export_name + format, legend_ncol=1)
