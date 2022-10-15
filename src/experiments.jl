@@ -231,8 +231,6 @@ function _parse_fmemo(fmemo, maxheight)
     return fmemo
 end
 
-# Utility to avoid
-
 """
     driver
 
