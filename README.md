@@ -10,7 +10,7 @@
 ![Version](https://img.shields.io/badge/julia-1.8.1-orange)
 
 
-# Multi-Models and Multi-Formulas Finite Model Checking for Modal Logic Formulas Induction
+# Multi-Modelsand Multi-Formulas Finite Model Checking for Modal Logic Formulas Induction
 
 by Mauro Milella, 
 Giovanni Pagliarini, 
@@ -25,6 +25,7 @@ Ionel Eduard Stan
 > logics). We investigate such generalization by, first, pointing out the need for finite model checking in
 > automatic inductive reasoning, and, then, showing how to efficiently solve it. We release an open-source
 > implementation of our simulations.
+___
 
 ## Software usage
 
@@ -34,13 +35,36 @@ Please, install the required dependencies by running
 
     julia --project=. src/install.jl
 
-Then, the code can be executed by launching the following command:
+Then, the code can be executed by launching the command
 
-    julia --project=. src/experiments.jl --nmodels N_MODELS --nworlds N_WORLDS --nletters N_LETTERS --fmaxheight F_MAXHEIGHT --fmemo F_MEMO --nformulas N_FORMULAS --prfactor PR_FACTOR --nreps N_REPS
+    julia --project=. src/experiments.jl --nmodels N_MODELS --nworlds N_WORLDS --nletters N_LETTERS --fmaxheight F_MAXHEIGHT --fmemo F_MEMO --nformulas N_FORMULAS --prfactor PR_FACTOR --nreps N_REPS --rng RNG_SEED
+
+where the flags meaning is the following:
+
+* --nmodels: (int, $\gt 0$) number of Kripke models.
+* --nworlds: (int, $\gt 0$) number of worlds in each Kripke model.
+* --nletters: (int, $\gt 0$) alphabet cardinality.
+* --fmaxheight: (int, $\gt 0$) formulas max height.
+* --fmemo: string representing the max height of *shared* (sub)formulas.
+
+    An example of valid usage is `--fmemo='no,0,1,2'`, where `'no'` means that memoization is not shared between different (sub)formulas model-checking on the same model.
+
+* --nformulas: (int, $\gt 0$) number of formulas to be model-checked on each Kripke model.
+* --prfactor: (float ranging in $[0,1]$) pruning factor. 
+
+    This corresponds to the probability of interrupting the formula-generation process. As this parameter is set to be closer to $1.0$, formulas are generally smaller in size than the chosen `--fmaxheight`.
+* --nreps: (int, $\gt 0$) number of experiment repetitions.
+* --rng: (int) seed to reproduce the experiment.
+
+For more information, please launch
+
+    julia --project=. src/experiments.jl --help
+___
 
 A utility bash script is provided (see `src/launch_experiments.sh`) to enqueue the execution of more parametrizations, instead of manually launching the command above.
 
 The generated plot is saved in `outcomes/plots`. Each execution it's also associated with a CSV (created in `outcomes/csv`) useful to adjust and customize plottings with ad-hoc scripts: in this regard, an example python script is provided (it's placed in the latter director) to obtain results graphically similar to those presented in the paper. 
+___
 
 ## Examples 
 

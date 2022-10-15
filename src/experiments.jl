@@ -197,7 +197,7 @@ function _timed_check_experiment(
     fx::SoleLogics.Formula;
     max_fmemo = Inf,
 )
-    forget_list = Vector{SoleLogics.Node}()
+    forget_list = Vector{SoleLogics.FNode}()
     t = zero(Float64)
 
     if !haskey(memo(km), fhash(fx.tree))
@@ -231,6 +231,8 @@ function _parse_fmemo(fmemo, maxheight)
     return fmemo
 end
 
+# Utility to avoid
+
 """
     driver
 
@@ -240,7 +242,7 @@ Helper function to run the experiments from commandline through the specificatio
 # Example
 
 ```
-> julia --project=. src/experiments.jl --nmodels 10 --nworlds 10 --nletters 2 --fmaxheight 4 --nformulas 100 --prfactor 0.8 --nreps 10 --fmemo="no,0,1,2"
+> julia --project=. src/experiments.jl --nmodels 10 --nworlds 10 --nletters 2 --fmaxheight 4 --nformulas 100 --prfactor 0.8 --nreps 100 --fmemo="no,0,1,2"
 ```
 """
 function driver(args)
@@ -293,12 +295,12 @@ function parse_commandline()
 
     @add_arg_table s begin
         "--nmodels"
-        help = "Number of kripke models."
+        help = "Number of Kripke models."
         arg_type = Int
         required = true
 
         "--nworlds"
-        help = "Number of worlds in each kripke model."
+        help = "Number of worlds in each Kripke model."
         arg_type = Int
         default = 10
 
@@ -308,12 +310,12 @@ function parse_commandline()
         required = true
 
         "--fmaxheight"
-        help = "Formula max height."
+        help = "Formulas max height."
         arg_type = Int
         required = true
 
         "--fmemo"
-        help = "Set of string representing the max memoized formulas height; " *
+        help = "String representing the max memoized formulas height; " *
         "no' means that memoization is not shared between different (sub)formulas. " *
         "E.g of a valid usage: --fmemo='no,0,1,2'."
         required = true
@@ -324,7 +326,7 @@ function parse_commandline()
         required = true
 
         "--prfactor"
-        help = "Pruning factor to shorten generated formulas."
+        help = "Pruning factor used to shorten generated formulas."
         arg_type = Float64
         default = 0.0
 
@@ -340,6 +342,14 @@ function parse_commandline()
     end
 
     return parse_args(s)
+end
+
+function ArgParse.parse_item(::Type{Int}, x::AbstractString)
+    n = parse(Int, x)
+    if n <= 0
+        error("$n has to be greater than 0")
+    end
+    return Int(parse(Int, x))
 end
 
 # Try to execute the experiments through `driver`,
