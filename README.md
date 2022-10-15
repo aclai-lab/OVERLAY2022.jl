@@ -41,20 +41,20 @@ Then, the code can be executed by launching the command
 
 where the flags meaning is the following:
 
-* --nmodels: (int, $\gt 0$) number of Kripke models.
-* --nworlds: (int, $\gt 0$) number of worlds in each Kripke model.
-* --nletters: (int, $\gt 0$) alphabet cardinality.
-* --fmaxheight: (int, $\gt 0$) formulas max height.
-* --fmemo: string representing the max height of *shared* (sub)formulas.
+* `--nmodels`: (int, $\gt 0$) number of Kripke models.
+* `--nworlds`: (int, $\gt 0$) number of worlds in each Kripke model.
+* `--nletters`: (int, $\gt 0$) alphabet cardinality.
+* `--fmaxheight`: (int, $\gt 0$) formulas max height.
+* `--fmemo`: string representing the max height of *shared* (sub)formulas.
 
     An example of valid usage is `--fmemo='no,0,1,2'`, where `'no'` means that memoization is not shared between different (sub)formulas model-checking on the same model.
 
-* --nformulas: (int, $\gt 0$) number of formulas to be model-checked on each Kripke model.
-* --prfactor: (float ranging in $[0,1]$) pruning factor. 
+* `--nformulas`: (int, $\gt 0$) number of formulas to be model-checked on each Kripke model.
+* `--prfactor`: (float ranging in $[0,1]$) pruning factor. 
 
     This corresponds to the probability of interrupting the formula-generation process. As this parameter is set to be closer to $1.0$, formulas are generally smaller in size than the chosen `--fmaxheight`.
-* --nreps: (int, $\gt 0$) number of experiment repetitions.
-* --rng: (int) seed to reproduce the experiment.
+* `--nreps`: (int, $\gt 0$) number of experiment repetitions.
+* `--rng`: (int) seed to reproduce the experiment.
 
 For more information, please launch
 
