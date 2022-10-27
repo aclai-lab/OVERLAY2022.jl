@@ -10,12 +10,17 @@
 ![Version](https://img.shields.io/badge/julia-1.8.1-orange)
 
 
-# Multi-Modelsand Multi-Formulas Finite Model Checking for Modal Logic Formulas Induction
+# Multi-Models and Multi-Formulas Finite Model Checking for Modal Logic Formulas Induction
 
 by Mauro Milella, 
 Giovanni Pagliarini, 
 Andrea Paradiso, 
 Ionel Eduard Stan
+
+Applied Computational Logic and Artificial Intelligence ([ACLAI](https://aclai.unife.it)) Laboratory,
+<br>Department of Mathematics and Computer Science,
+<br>University of Ferrara,
+<br>Italy
 
 ## Abstract
 
