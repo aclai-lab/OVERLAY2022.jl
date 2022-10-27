@@ -36,9 +36,9 @@ ___
 
 Given a specific parametrization, the purpose of this module is to compute model-checking over multiple models and multiple formulas. Results are plotted, comparing the time elapsed with different memoization intensities.
 
-Please, install the required dependencies by running
+Please, install the required dependencies by entering the Julia Package Manager (press `]` in the REPL) and launch `instantiate`:
 
-    julia --project=. src/install.jl
+    (OVERLAY2022) pkg> instantiate
 
 Then, the code can be executed by launching the command
 
