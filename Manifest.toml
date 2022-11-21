@@ -98,9 +98,9 @@ version = "0.12.8"
 
 [[deps.CommonMark]]
 deps = ["Crayons", "JSON", "URIs"]
-git-tree-sha1 = "4cd7063c9bdebdbd55ede1af70f3c2f48fab4215"
+git-tree-sha1 = "86cce6fd164c26bad346cc51ca736e692c9f553c"
 uuid = "a80b9123-70ca-4bc0-993e-6e3bcb318db6"
-version = "0.8.6"
+version = "0.8.7"
 
 [[deps.Compat]]
 deps = ["Dates", "LinearAlgebra", "UUIDs"]
@@ -356,9 +356,9 @@ version = "2.1.2+0"
 
 [[deps.JuliaFormatter]]
 deps = ["CSTParser", "CommonMark", "DataStructures", "Glob", "Pkg", "Tokenize"]
-git-tree-sha1 = "a5705d6e0a99bfb9465e7f2381783d3368f3b94b"
+git-tree-sha1 = "a91af8a988efedba0e80deec6b8ce70a0054e94f"
 uuid = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
-version = "1.0.14"
+version = "1.0.15"
 
 [[deps.LAME_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -635,9 +635,9 @@ uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [[deps.Qt5Base_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Fontconfig_jll", "Glib_jll", "JLLWrappers", "Libdl", "Libglvnd_jll", "OpenSSL_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libxcb_jll", "Xorg_xcb_util_image_jll", "Xorg_xcb_util_keysyms_jll", "Xorg_xcb_util_renderutil_jll", "Xorg_xcb_util_wm_jll", "Zlib_jll", "xkbcommon_jll"]
-git-tree-sha1 = "c6c0f690d0cc7caddb74cef7aa847b824a16b256"
+git-tree-sha1 = "0c03844e2231e12fda4d0086fd7cbe4098ee8dc5"
 uuid = "ea2cea3b-5b76-57ae-a6ef-0a8af62496e1"
-version = "5.15.3+1"
+version = "5.15.3+2"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -716,16 +716,16 @@ uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
 [[deps.SoleAlphabets]]
 deps = ["IterTools", "SoleTraits"]
-git-tree-sha1 = "fd7a171cddddf30c3bbb01f195af15a5c5a29e58"
-repo-rev = "dev"
+git-tree-sha1 = "5c550d4d1df57cf9784adb8ad118ff71bb8e1a0e"
+repo-rev = "v0.1"
 repo-url = "https://github.com/aclai-lab/SoleAlphabets.jl"
 uuid = "bc461207-1577-452f-bfcc-57c11e9f51b7"
 version = "0.1.0"
 
 [[deps.SoleLogics]]
 deps = ["DataStructures", "Dictionaries", "IterTools", "JuliaFormatter", "Random", "Reexport", "SoleAlphabets", "SoleTraits", "SoleWorlds"]
-git-tree-sha1 = "cc6ad8b68edaf74ee9335670244502918faa2bd4"
-repo-rev = "overlay2022/mauro"
+git-tree-sha1 = "a291e2ccd11d0b75d0a27dcdb5287137dc4b896c"
+repo-rev = "v0.1"
 repo-url = "https://github.com/aclai-lab/SoleLogics.jl"
 uuid = "b002da8f-3cb3-4d91-bbe3-2953433912b5"
 version = "0.1.0"
@@ -733,22 +733,22 @@ version = "0.1.0"
 [[deps.SoleModelChecking]]
 deps = ["CPUTime", "CSV", "Compose", "DataStructures", "JuliaFormatter", "Missings", "Plots", "Random", "Reexport", "SoleAlphabets", "SoleLogics", "SoleTraits", "SoleWorlds", "StatsBase"]
 git-tree-sha1 = "37e8bf7925c55d5c66ed9d22895881f2551fac41"
-repo-rev = "mfmm/mauro"
+repo-rev = "v0.1"
 repo-url = "https://github.com/aclai-lab/SoleModelChecking.jl"
 uuid = "f545febf-9d2a-4ce1-b6cd-bbab897c9eb4"
 version = "0.1.0"
 
 [[deps.SoleTraits]]
 git-tree-sha1 = "e685dc48cd0b4de3c3115b67d683eaecec997e2a"
-repo-rev = "main"
+repo-rev = "v0.1"
 repo-url = "https://github.com/aclai-lab/SoleTraits.jl"
 uuid = "f0cd7361-857b-4e5b-8aae-3a26fab9cfa9"
 version = "0.1.0"
 
 [[deps.SoleWorlds]]
 deps = ["IterTools", "Pkg"]
-git-tree-sha1 = "e815213385d4d875135f6d10ebd6a9a65a16c559"
-repo-rev = "worlds/mauro"
+git-tree-sha1 = "560773a866e20cb9854e39eff9e3980fa0dd4070"
+repo-rev = "v0.1"
 repo-url = "https://github.com/aclai-lab/SoleWorlds.jl"
 uuid = "d5f91e23-4e14-4856-a67b-b38735209aab"
 version = "0.1.0"
